@@ -42,7 +42,7 @@ class Recipe extends Model
 
     public function likes()
     {
-        return $this->hasMany(Like::class);
+        return $this->belongsToMany(User::class, 'likes', 'recipe_id', 'user_id');
     }
 
     public function comments()
@@ -76,7 +76,6 @@ class Recipe extends Model
     }
 
     // Attributes
-
     public function getUserNameAttribute()
     {
         return $this->user->name;
@@ -95,10 +94,10 @@ class Recipe extends Model
 
     public function getIsLikedAttribute()
     {
-        if (auth()->user()) {
-            return $this->likes->contains('user_id', auth()->user()->id);
+        $user = auth()->user();
+        if ($user) {
+            return $this->likes->contains('id', $user->id);
         }
-        return false;
     }
 
     public function getLikesCountAttribute()
