@@ -13,7 +13,7 @@ class Plan extends Model
 
     public function recipes()
     {
-        return $this->belongsToMany(Recipe::class);
+        return $this->belongsToMany(Recipe::class)->withTimestamps();
     }
 
     public function user()

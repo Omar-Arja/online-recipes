@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RecipeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,4 +24,17 @@ Route::prefix('/auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout',[AuthController::class, 'logout']);
+});
+
+Route::prefix('/recipes')->group(function () {
+    Route::get('/{search?}', [RecipeController::class, 'getRecipes']);
+    Route::get('/{id}', [RecipeController::class, 'getRecipe']);
+    Route::post('/', [RecipeController::class, 'createRecipe']);
+    Route::delete('/{id}', [RecipeController::class, 'deleteRecipe']);
+
+    Route::post('/{id}/comment', [RecipeController::class, 'addComment']);
+    Route::post('/{id}/like', [RecipeController::class, 'likeRecipe']);
+
+    Route::post('/shopping-list/{id}', [RecipeController::class, 'addRecipeToShoppingList']);
+    Route::delete('/shopping-list/{id}', [RecipeController::class, 'removeRecipeFromShoppingList']);
 });

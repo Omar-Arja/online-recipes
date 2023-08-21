@@ -48,12 +48,12 @@ class User extends Authenticatable implements JWTSubject
 
     public function likedRecipes()
     {
-        return $this->belongsToMany(Recipe::class, 'likes', 'user_id', 'recipe_id');
+        return $this->belongsToMany(Recipe::class, 'likes', 'user_id', 'recipe_id')->withTimestamps();
     }
 
     public function comments()
     {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(Comment::class)->withTimestamps();
     }
 
     public function shoppingList()
@@ -63,6 +63,6 @@ class User extends Authenticatable implements JWTSubject
 
     public function plans()
     {
-        return $this->hasMany(Plan::class);
+        return $this->hasMany(Plan::class)->withTimestamps();
     }
 }

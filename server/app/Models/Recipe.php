@@ -42,12 +42,12 @@ class Recipe extends Model
 
     public function likes()
     {
-        return $this->belongsToMany(User::class, 'likes', 'recipe_id', 'user_id');
+        return $this->belongsToMany(User::class, 'likes', 'recipe_id', 'user_id')->withTimestamps();
     }
 
     public function comments()
     {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(Comment::class)->orderBy('created_at', 'desc');
     }
 
     public function ingredients()
@@ -67,12 +67,17 @@ class Recipe extends Model
 
     public function plans()
     {
-        return $this->belongsToMany(Plan::class);
+        return $this->belongsToMany(Plan::class)->withTimestamps();
     }
 
     public function shoppingLists()
     {
-        return $this->belongsToMany(ShoppingList::class);
+        return $this->belongsToMany(ShoppingList::class)->withTimestamps();
+    }
+
+    public function shoppingListItems()
+    {
+        return $this->hasMany(ShoppingListItem::class);
     }
 
     // Attributes
@@ -83,11 +88,9 @@ class Recipe extends Model
 
     public function getIsAddedAttribute()
     {
-        if (auth()->user()) {
-            $shoppingList = auth()->user()->shoppingList;
-            if ($shoppingList) {
-                return $shoppingList->items->contains('recipe_id', $this->id);
-            }
+        $user = auth()->user();
+        if ($user) {
+            return $this->shoppingListItems->contains('recipe_id', $this->id);
         }
         return false;
     }
