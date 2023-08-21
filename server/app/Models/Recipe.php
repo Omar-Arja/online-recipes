@@ -11,11 +11,30 @@ use App\Models\Ingredient;
 use App\Models\Image;
 use App\Models\Cuisine;
 use App\Models\Plan;
+use App\Models\RecipeIngredient;
 
 class Recipe extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'user_id',
+        'cuisine_id',
+    ];
+
+    protected $appends = [
+        'user_name',
+        'is_added',
+        'is_liked',
+        'likes_count',
+        'comments_count',
+        'ingredients',
+        'images',
+        'cuisine_name',
+    ];
+
+    // Relationships
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -33,7 +52,7 @@ class Recipe extends Model
 
     public function ingredients()
     {
-        return $this->hasMany(Ingredient::class)->withPivot('amount');
+        return $this->hasMany(RecipeIngredient::class, 'recipe_id');
     }
 
     public function images()
@@ -49,5 +68,61 @@ class Recipe extends Model
     public function plans()
     {
         return $this->belongsToMany(Plan::class);
+    }
+
+    public function shoppingLists()
+    {
+        return $this->belongsToMany(ShoppingList::class);
+    }
+
+    // Attributes
+
+    public function getUserNameAttribute()
+    {
+        return $this->user->name;
+    }
+
+    public function getIsAddedAttribute()
+    {
+        if (auth()->user()) {
+            $shoppingList = auth()->user()->shoppingList;
+            if ($shoppingList) {
+                return $shoppingList->items->contains('recipe_id', $this->id);
+            }
+        }
+        return false;
+    }
+
+    public function getIsLikedAttribute()
+    {
+        if (auth()->user()) {
+            return $this->likes->contains('user_id', auth()->user()->id);
+        }
+        return false;
+    }
+
+    public function getLikesCountAttribute()
+    {
+        return $this->likes->count();
+    }
+
+    public function getCommentsCountAttribute()
+    {
+        return $this->comments->count();
+    }
+
+    public function getIngredientsAttribute()
+    {
+        return $this->ingredients()->get();
+    }
+
+    public function getImagesAttribute()
+    {
+        return $this->images()->get();
+    }
+
+    public function getCuisineNameAttribute()
+    {
+        return $this->cuisine ? $this->cuisine->name : null;
     }
 }

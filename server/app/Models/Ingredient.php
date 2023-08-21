@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Recipe;
+use App\Models\RecipeIngrediant;
 
 class Ingredient extends Model
 {
     use HasFactory;
 
-    public function recipes()
+    public function recipeIngrediants()
     {
-        return $this->belongsToMany(Recipe::class)->withPivot('amount');
+        return $this->hasMany(RecipeIngredient::class, 'ingredient_id');
     }
 }
