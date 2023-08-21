@@ -31,13 +31,11 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+        $user->token = $token;
+
         return response()->json([
                 'status' => 'success',
                 'user' => $user,
-                'authorisation' => [
-                    'token' => $token,
-                    'type' => 'bearer',
-                ]
             ]);
 
     }
