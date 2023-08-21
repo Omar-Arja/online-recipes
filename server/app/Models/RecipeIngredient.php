@@ -10,6 +10,16 @@ class RecipeIngredient extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'recipe_id',
+        'ingredient_id',
+        'amount',
+    ];
+
+    protected $appends = [
+        'name',
+    ];
+
     public function recipe()
     {
         return $this->belongsTo(Recipe::class);
@@ -18,5 +28,10 @@ class RecipeIngredient extends Model
     public function ingredient()
     {
         return $this->belongsTo(Ingredient::class);
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->ingredient->name;
     }
 }

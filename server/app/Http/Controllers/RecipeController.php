@@ -45,7 +45,7 @@ class RecipeController extends Controller
             'cuisine_name' => 'required|string|max:255',
             'ingredients' => 'required|array',
             'ingredients.*.name' => 'required|string|max:255',
-            'ingredients.*.ammount' => 'required|string|max:255',
+            'ingredients.*.amount' => 'required|string|max:255',
             'images' => 'required|array',
         ]);
 
@@ -59,15 +59,15 @@ class RecipeController extends Controller
         $recipe->cuisine_id = $cuisine->id;
         $recipe->save();
 
-        foreach ($request->ingredients as $ingredient) {
+        foreach ($request->ingredients as $ingredientData) {
             $ingredient = new Ingredient();
-            $ingredient->name = $ingredient['name'];
+            $ingredient->name = $ingredientData['name'];
             $ingredient->save();
 
             $recipe_ingredient = new RecipeIngredient();
             $recipe_ingredient->recipe_id = $recipe->id;
             $recipe_ingredient->ingredient_id = $ingredient->id;
-            $recipe_ingredient->ammount = $ingredient['ammount'];
+            $recipe_ingredient->amount = $ingredientData['amount'];
             $recipe_ingredient->save();
         }
 
