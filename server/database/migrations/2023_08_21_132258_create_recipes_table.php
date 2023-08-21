@@ -35,6 +35,7 @@ return new class extends Migration
         Schema::create('ingredients', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('amount');
             $table->timestamps();
         });
 
@@ -63,6 +64,21 @@ return new class extends Migration
 
     public function down(): void
     {
+        Schema::table('recipes', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+            $table->dropForeign(['cuisine_id']);
+        });
+
+        Schema::table('recipe_ingredients', function (Blueprint $table) {
+            $table->dropForeign(['recipe_id']);
+            $table->dropForeign(['ingredient_id']);
+        });
+
+        Schema::table('images', function (Blueprint $table) {
+            $table->dropForeign(['recipe_id']);
+        });
+
+        // drop tables
         Schema::dropIfExists('recipes');
         Schema::dropIfExists('recipe_ingredients');
         Schema::dropIfExists('images');
