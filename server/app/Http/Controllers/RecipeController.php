@@ -16,12 +16,23 @@ class RecipeController extends Controller
 {
     public function getRecipes($search = null)
     {
+        $recipesQuery = Recipe::query();
+
         if ($search) {
-            $searchBy = $request->search->explode('.')[0];
-            $searchValue = $request->search->explode('.')[1];
+            $recipesQuery->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhereHas('cuisine', function ($subquery) use ($search) {
+                          $subquery->where('name', 'like', '%' . $search . '%');
+                      })
+                      ->orWhereHas('ingredients', function ($subquery) use ($search) {
+                          $subquery->where('name', 'like', '%' . $search . '%');
+                      })
+                      ->orWhereHas('user', function ($subquery) use ($search) {
+                          $subquery->where('name', 'like', '%' . $search . '%');
+                      });
+            });
 
-            $recipes = Recipe::where($searchBy, 'LIKE', "%{$searchValue}%")->get();
-
+            $recipes = $recipesQuery->get();
         } else {
             $recipes = Recipe::all();
         }
